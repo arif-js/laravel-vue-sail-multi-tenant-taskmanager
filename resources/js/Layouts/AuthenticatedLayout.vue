@@ -8,10 +8,10 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Button } from '@/Components/ui/button';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
 
@@ -57,7 +57,7 @@ const currentTeamId = page.props.currentTeamId ?? null;
                                 <template v-if="$page.props.auth.user">
                                     <DropdownMenu>
                                         <DropdownMenuTrigger as-child>
-                                            <button type="button"
+                                            <Button type="button"
                                                 class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300">
                                                 {{ $page.props.auth.user.name }}
                                                 <svg class="-me-0.5 ms-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
@@ -66,16 +66,16 @@ const currentTeamId = page.props.currentTeamId ?? null;
                                                         d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
                                                         clip-rule="evenodd" />
                                                 </svg>
-                                            </button>
+                                            </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end" class="w-48">
                                             <DropdownMenuItem as="a" :href="route('profile.edit')">
                                                 Profile
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuItem as="form" :action="route('logout')" method="post">
-                                                <button type="submit" class="w-full text-left">Log Out</button>
-                                            </DropdownMenuItem>
+                                            <Button variant="ghost" class="w-full text-left"
+                                                @click="$inertia.post(route('logout'))">Log
+                                                Out</Button>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </template>
@@ -84,7 +84,7 @@ const currentTeamId = page.props.currentTeamId ?? null;
 
                         <!-- Hamburger -->
                         <div class="-me-2 flex items-center sm:hidden">
-                            <button @click="
+                            <Button @click="
                                 showingNavigationDropdown =
                                 !showingNavigationDropdown
                                 "
@@ -103,7 +103,7 @@ const currentTeamId = page.props.currentTeamId ?? null;
                                     }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M6 18L18 6M6 6l12 12" />
                                 </svg>
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>
