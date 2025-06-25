@@ -13,7 +13,7 @@
             <div class="flex gap-2 flex-wrap">
                 <Card class="w-full overflow-x-auto">
                     <CardHeader class="flex flex-row items-center w-full justify-between">
-                        <div>
+                        <div class="flex flex-col gap-2">
                             <CardTitle>Teams Overview</CardTitle>
                             <CardDescription>Summary of your teams and tasks</CardDescription>
                         </div>
@@ -27,12 +27,12 @@
                         <Table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <TableHeader class="bg-gray-50 dark:bg-gray-800">
                                 <TableRow>
-                                    <TableHead>Team Name</TableHead>
-                                    <TableHead>Total Tasks</TableHead>
-                                    <TableHead>Pending</TableHead>
-                                    <TableHead>In Progress</TableHead>
-                                    <TableHead>Completed</TableHead>
-                                    <TableHead>Actions</TableHead>
+                                    <TableHead class="px-6 py-4 whitespace-nowrap">Team Name</TableHead>
+                                    <TableHead class="px-6 py-4 whitespace-nowrap">Total Tasks</TableHead>
+                                    <TableHead class="px-6 py-4 whitespace-nowrap">Pending</TableHead>
+                                    <TableHead class="px-6 py-4 whitespace-nowrap">In Progress</TableHead>
+                                    <TableHead class="px-6 py-4 whitespace-nowrap">Completed</TableHead>
+                                    <TableHead class="px-6 py-4 whitespace-nowrap">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>

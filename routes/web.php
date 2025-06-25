@@ -48,7 +48,7 @@ Route::middleware('auth')->group(function () {
 
         Route::prefix('teams/{team}')->middleware(EnsureUserBelongsToTeam::class)->group(function () {
             Route::resource('tasks', TaskController::class)
-                ->middleware(EnsureUserIsLoggedinInTheTeam::class)->except(['create', 'show']);
+                ->middleware(EnsureUserIsLoggedinInTheTeam::class);
 
             Route::get('/invite-form', [TeamController::class, 'showInviteForm'])
                 ->middleware([EnsureUserBelongsToTeam::class, EnsureUserIsTeamAdminOrOwner::class])

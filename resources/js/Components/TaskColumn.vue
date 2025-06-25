@@ -18,9 +18,10 @@
                     @input="(e) => $emit('search', e.target.value, status)" />
             </div>
 
-            <Container group-name="tasks" :get-child-payload="(i) => tasks[i]" @drop="(e) => $emit('drop', status, e)">
+            <Container class="h-96" group-name="tasks" :get-child-payload="(i) => tasks[i]"
+                @drop="(e) => $emit('drop', status, e)">
                 <Draggable v-for="task in tasks" :key="task.id" :data="task" :class="[
-                    'bg-gray-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow duration-200 cursor-pointer',
+                    'bg-gray-50 rounded-lg mb-4 p-4 border border-gray-200 hover:shadow-md transition-shadow duration-200 cursor-pointer',
                     status === 'completed' ? 'opacity-75' : ''
                 ]">
                     <h4 :class="['font-medium text-gray-900 mb-2', status === 'completed' ? 'line-through' : '']">
