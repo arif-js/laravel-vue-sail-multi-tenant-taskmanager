@@ -23,11 +23,11 @@
                         <CardDescription>
                             <form class="flex flex-col gap-4" @submit.prevent="updateTeam">
                                 <div>
-                                    <Label for="teamName" class="block mb-1 font-medium">Team Name</Label>
+                                    <Label for="teamName">Team Name</Label>
                                     <Input id="teamName" v-model="form.name" placeholder="Enter team name" required />
                                 </div>
                                 <div>
-                                    <Label for="description" class="block mb-1 font-medium">Description</Label>
+                                    <Label for="description">Description</Label>
                                     <Input id="description" v-model="form.description"
                                         placeholder="Enter description" />
                                 </div>
@@ -37,7 +37,7 @@
 
                         <CardDescription>
                             <Button variant="outline" class="w-full">
-                                <a :href="route('dashboard')">
+                                <a :href="route('teams.show', { team: props.team.id })">
                                     Back to Dashboard
                                 </a>
                             </Button>

@@ -1,300 +1,193 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <!-- Header -->
-    <div class="bg-white shadow-sm border-b">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center py-6">
-          <div>
-            <h1 class="text-3xl font-bold text-gray-900">Tasks Board</h1>
-            <p class="mt-1 text-sm text-gray-500">Manage your tasks across different stages</p>
-          </div>
-          <button
-            @click="showCreateModal = true"
-            class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200"
-          >
-            <PlusIcon class="w-4 h-4 mr-2" />
-            Add Task
-          </button>
-        </div>
+
+  <Head title="Tasks" />
+  <AuthenticatedLayout>
+    <template #header>
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
+          Tasks
+        </h2>
+        <Button @click="showCreateModal = true">
+          <PlusIcon class="w-4 h-4 mr-2" />
+          Add Task
+        </Button>
       </div>
-    </div>
+    </template>
 
-    <!-- Board -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Pending Column -->
-        <div class="bg-white rounded-lg shadow-sm border">
-          <div class="px-4 py-3 border-b bg-yellow-50">
-            <div class="flex items-center justify-between">
-              <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                <ClockIcon class="w-5 h-5 mr-2 text-yellow-600" />
-                Pending
-              </h3>
-              <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                {{ pendingTasks.length }}
-              </span>
-            </div>
-          </div>
-          <div class="p-4 space-y-3 min-h-96">
-            <div
-              v-for="task in pendingTasks"
-              :key="task.id"
-              class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow duration-200 cursor-pointer"
-              @click="selectTask(task)"
-            >
-              <h4 class="font-medium text-gray-900 mb-2">{{ task.title }}</h4>
-              <p class="text-sm text-gray-600 mb-3 line-clamp-2">{{ task.description }}</p>
-              <div class="flex items-center justify-between">
-                <span class="text-xs text-gray-500">{{ formatDate(task.created_at) }}</span>
-                <div class="flex items-center space-x-2">
-                  <button
-                    @click.stop="updateTaskStatus(task.id, 'in_progress')"
-                    class="text-blue-600 hover:text-blue-800 text-xs font-medium"
-                  >
-                    Start
-                  </button>
-                  <button
-                    @click.stop="deleteTask(task.id)"
-                    class="text-red-600 hover:text-red-800"
-                  >
-                    <TrashIcon class="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div v-if="pendingTasks.length === 0" class="text-center py-8 text-gray-500">
-              <ClockIcon class="w-12 h-12 mx-auto mb-3 text-gray-300" />
-              <p>No pending tasks</p>
-            </div>
-          </div>
-        </div>
+    <BodyLayout>
+      <Card class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <TaskColumn icon="ClockIcon" title="Pending" color="yellow" :tasks="pendingTasks" status="pending"
+            @drop="onDrop" @delete="deleteTask" @update="updateTaskStatus" @search="searchTasks" />
 
-        <!-- In Progress Column -->
-        <div class="bg-white rounded-lg shadow-sm border">
-          <div class="px-4 py-3 border-b bg-blue-50">
-            <div class="flex items-center justify-between">
-              <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                <PlayIcon class="w-5 h-5 mr-2 text-blue-600" />
-                In Progress
-              </h3>
-              <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                {{ inProgressTasks.length }}
-              </span>
-            </div>
-          </div>
-          <div class="p-4 space-y-3 min-h-96">
-            <div
-              v-for="task in inProgressTasks"
-              :key="task.id"
-              class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow duration-200 cursor-pointer"
-              @click="selectTask(task)"
-            >
-              <h4 class="font-medium text-gray-900 mb-2">{{ task.title }}</h4>
-              <p class="text-sm text-gray-600 mb-3 line-clamp-2">{{ task.description }}</p>
-              <div class="flex items-center justify-between">
-                <span class="text-xs text-gray-500">{{ formatDate(task.created_at) }}</span>
-                <div class="flex items-center space-x-2">
-                  <button
-                    @click.stop="updateTaskStatus(task.id, 'completed')"
-                    class="text-green-600 hover:text-green-800 text-xs font-medium"
-                  >
-                    Complete
-                  </button>
-                  <button
-                    @click.stop="updateTaskStatus(task.id, 'pending')"
-                    class="text-yellow-600 hover:text-yellow-800 text-xs font-medium"
-                  >
-                    Pause
-                  </button>
-                  <button
-                    @click.stop="deleteTask(task.id)"
-                    class="text-red-600 hover:text-red-800"
-                  >
-                    <TrashIcon class="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div v-if="inProgressTasks.length === 0" class="text-center py-8 text-gray-500">
-              <PlayIcon class="w-12 h-12 mx-auto mb-3 text-gray-300" />
-              <p>No tasks in progress</p>
-            </div>
-          </div>
-        </div>
+          <TaskColumn icon="PlayIcon" title="In Progress" color="blue" :tasks="inProgressTasks" status="in_progress"
+            @drop="onDrop" @delete="deleteTask" @update="updateTaskStatus" @search="searchTasks" />
 
-        <!-- Completed Column -->
-        <div class="bg-white rounded-lg shadow-sm border">
-          <div class="px-4 py-3 border-b bg-green-50">
-            <div class="flex items-center justify-between">
-              <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                <CheckCircleIcon class="w-5 h-5 mr-2 text-green-600" />
-                Completed
-              </h3>
-              <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                {{ completedTasks.length }}
-              </span>
-            </div>
-          </div>
-          <div class="p-4 space-y-3 min-h-96">
-            <div
-              v-for="task in completedTasks"
-              :key="task.id"
-              class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow duration-200 cursor-pointer opacity-75"
-              @click="selectTask(task)"
-            >
-              <h4 class="font-medium text-gray-900 mb-2 line-through">{{ task.title }}</h4>
-              <p class="text-sm text-gray-600 mb-3 line-clamp-2">{{ task.description }}</p>
-              <div class="flex items-center justify-between">
-                <span class="text-xs text-gray-500">{{ formatDate(task.updated_at) }}</span>
-                <div class="flex items-center space-x-2">
-                  <button
-                    @click.stop="updateTaskStatus(task.id, 'in_progress')"
-                    class="text-blue-600 hover:text-blue-800 text-xs font-medium"
-                  >
-                    Reopen
-                  </button>
-                  <button
-                    @click.stop="deleteTask(task.id)"
-                    class="text-red-600 hover:text-red-800"
-                  >
-                    <TrashIcon class="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div v-if="completedTasks.length === 0" class="text-center py-8 text-gray-500">
-              <CheckCircleIcon class="w-12 h-12 mx-auto mb-3 text-gray-300" />
-              <p>No completed tasks</p>
-            </div>
-          </div>
+          <TaskColumn icon="CheckCircleIcon" title="Completed" color="green" :tasks="completedTasks" status="completed"
+            @drop="onDrop" @delete="deleteTask" @update="updateTaskStatus" @search="searchTasks" />
         </div>
-      </div>
-    </div>
+      </Card>
 
-    <!-- Create Task Modal -->
-    <div v-if="showCreateModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
-        <div class="px-6 py-4 border-b">
-          <h3 class="text-lg font-semibold text-gray-900">Create New Task</h3>
-        </div>
-        <form @submit.prevent="createTask" class="p-6">
-          <div class="mb-4">
-            <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Title</label>
-            <input
-              id="title"
-              v-model="newTask.title"
-              type="text"
-              required
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter task title"
-            />
-          </div>
-          <div class="mb-6">
-            <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
-            <textarea
-              id="description"
-              v-model="newTask.description"
-              rows="3"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Enter task description"
-            ></textarea>
-          </div>
-          <div class="flex justify-end space-x-3">
-            <button
-              type="button"
-              @click="showCreateModal = false"
-              class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors duration-200"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors duration-200"
-            >
-              Create Task
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
+      <!-- Create Task Modal -->
+      <Dialog v-model:open="showCreateModal">
+        <DialogContent class="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Create New Task</DialogTitle>
+          </DialogHeader>
+          <form class="space-y-5" @submit.prevent="createTask">
+            <div>
+              <Label for="title">Title</Label>
+              <Input id="title" v-model="newTask.title" required placeholder="Enter task title" />
+            </div>
+            <div>
+              <Label for="description">Description</Label>
+              <Input id="description" as="textarea" v-model="newTask.description" rows="3"
+                placeholder="Enter task description" />
+            </div>
+            <div>
+              <Label for="assignee">Assignee</Label>
+              <Select v-model="newTask.user_id">
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Assignee" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem v-for="user in currentTeam.users" :key="user.id" :value="user.id">
+                    {{ user.name }}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div class="flex justify-end space-x-3 pt-2">
+              <Button type="button" variant="secondary" @click="showCreateModal = false">Cancel</Button>
+              <Button type="submit">Create Task</Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </BodyLayout>
+  </AuthenticatedLayout>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
-import { router } from '@inertiajs/vue3'
-import { PlusIcon, ClockIcon, PlayIcon, CheckCircleIcon, TrashIcon } from 'lucide-vue-next'
+import { computed, ref, reactive } from 'vue'
+import { router, Head, usePage } from '@inertiajs/vue3'
+import {
+  PlusIcon,
+} from 'lucide-vue-next'
 
-// Props from Laravel controller
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import BodyLayout from '@/Layouts/BodyLayout.vue'
+import TaskColumn from '@/components/TaskColumn.vue'
+
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
+
 const props = defineProps({
-  tasks: {
-    type: Array,
-    default: () => []
-  }
+  tasks: { type: Array, default: () => [] },
 })
 
-// Reactive data
+const page = usePage()
+const currentTeamId = page.props.currentTeamId ?? null
+const currentTeam = page.props.currentTeam ?? null
+
 const showCreateModal = ref(false)
-const newTask = ref({
-  title: '',
-  description: ''
-})
+const newTask = ref({ title: '', description: '', user_id: null, status: 'pending' })
+const localTasks = reactive([...props.tasks])
 
-// Computed properties to filter tasks by status
-const pendingTasks = computed(() => 
-  props.tasks.filter(task => task.status === 'pending')
-)
+const filterByStatus = (status) =>
+  computed(() => localTasks.filter((task) => task.status === status))
 
-const inProgressTasks = computed(() => 
-  props.tasks.filter(task => task.status === 'in_progress')
-)
-
-const completedTasks = computed(() => 
-  props.tasks.filter(task => task.status === 'completed')
-)
-
-// Methods
-const formatDate = (dateString) => {
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', { 
-    month: 'short', 
-    day: 'numeric',
-    year: 'numeric'
-  })
-}
+const pendingTasks = filterByStatus('pending')
+const inProgressTasks = filterByStatus('in_progress')
+const completedTasks = filterByStatus('completed')
 
 const createTask = () => {
-  router.post('/tasks', {
-    title: newTask.value.title,
-    description: newTask.value.description,
-    status: 'pending'
-  }, {
-    onSuccess: () => {
-      newTask.value = { title: '', description: '' }
-      showCreateModal.value = false
+  router.post(
+    route('tasks.store', { team: currentTeamId }),
+    {
+      title: newTask.value.title,
+      description: newTask.value.description,
+      user_id: newTask.value.user_id || currentTeam.users[0]?.id, // Default to first user if none selected
+      status: 'pending',
+    },
+    {
+      preserveScroll: true,
+      onSuccess: (page) => {
+        const newTaskFromServer = page.props.tasks.at(-1) // Get last task
+        localTasks.push(newTaskFromServer)
+
+        showCreateModal.value = false
+        newTask.value = { title: '', description: '', user_id: null, status: 'pending' }
+      },
+      onError: (errors) => {
+        console.error('Error creating task:', errors)
+      },
     }
-  })
+  )
 }
 
 const updateTaskStatus = (taskId, newStatus) => {
-  router.patch(`/tasks/${taskId}`, {
-    status: newStatus
-  }, {
-    preserveScroll: true
-  })
+  router.patch(
+    route('tasks.update', { team: currentTeamId, task: taskId }),
+    { status: newStatus },
+    {
+      preserveScroll: true,
+      onSuccess: (page) => {
+        const updatedTask = page.props.updatedTask // make sure backend returns it
+        replaceTaskInList(updatedTask)
+      }
+    }
+  )
 }
 
 const deleteTask = (taskId) => {
   if (confirm('Are you sure you want to delete this task?')) {
-    router.delete(`/tasks/${taskId}`, {
-      preserveScroll: true
+
+    router.delete(route('tasks.destroy', { team: currentTeamId, task: taskId }), {
+      preserveScroll: true,
     })
+
+    console.log(`Task with ID ${taskId} deleted.`);
+
+    removeTaskFromList(taskId)
   }
 }
 
-const selectTask = (task) => {
-  router.visit(`/tasks/${task.id}`)
+const onDrop = (newStatus, dropResult) => {
+  const { addedIndex, removedIndex, payload: task } = dropResult
+
+  if (addedIndex === null && removedIndex === null) return;
+  if (!task || task.status === newStatus) return
+
+  const updatedTask = { ...task, status: newStatus }
+
+  router.patch(route('tasks.update', { team: currentTeamId, task: task.id }), updatedTask, {
+    preserveScroll: true,
+  })
+
+  removeTaskFromList(task.id)
+  addTaskToList(updatedTask)
 }
+
+const replaceTaskInList = (updatedTask) => {
+  const index = localTasks.findIndex(t => t.id === updatedTask.id)
+  if (index !== -1) {
+    localTasks.splice(index, 1, updatedTask)
+  } else {
+    localTasks.push(updatedTask)
+  }
+}
+
+const removeTaskFromList = (id) => {
+  const index = localTasks.findIndex((t) => t.id === id)
+  if (index !== -1) localTasks.splice(index, 1)
+}
+
+const addTaskToList = (task) => localTasks.push(task)
 </script>
 
 <style scoped>

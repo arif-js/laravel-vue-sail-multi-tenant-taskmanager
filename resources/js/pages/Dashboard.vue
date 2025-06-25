@@ -11,52 +11,78 @@
 
         <BodyLayout>
             <div class="flex gap-2 flex-wrap">
-                <Card v-for="(stats, index) in teams" :key="index" class="max-w-md min-w-[300px] w-full">
-                    <CardHeader>
-                        <CardTitle v-if="stats.team_name" class="flex justify-between items-center">
-                            {{ stats.team_name }}
-
-                            <div class="flex space-x-2">
-                                <Button>
-                                    <a :href="route('teams.show', { team: stats.team_id })">
-                                        View
-                                    </a>
-                                </Button>
-                                <Button v-if="currentTeamId !== stats.team_id" @click="switchTeam(stats.team_id)"
-                                    variant="outline">
-                                    Switch
-                                </Button>
-                                <Badge v-if="currentTeamId === stats.team_id" variant="secondary">
-                                    Current Team
-                                </Badge>
-                            </div>
-                        </CardTitle>
-                        <CardTitle v-else>You are not a part of a team</CardTitle>
+                <Card class="w-full overflow-x-auto">
+                    <CardHeader class="flex flex-row items-center w-full justify-between">
+                        <div>
+                            <CardTitle>Teams Overview</CardTitle>
+                            <CardDescription>Summary of your teams and tasks</CardDescription>
+                        </div>
+                        <Button variant="outline" as-child>
+                            <a :href="route('teams.create')">
+                                Add New
+                            </a>
+                        </Button>
                     </CardHeader>
-
-                    <CardContent v-if="!stats.team_name">
-                        <CardDescription>
-                            <Button variant="outline" class="w-auto">
-                                <a :href="route('teams.create')">
-                                    Create or Join a Team
-                                </a>
-                            </Button>
-                        </CardDescription>
-                    </CardContent>
-
-                    <CardContent v-else>
-                        <CardDescription>
-                            Total Tasks: {{ stats.total }}
-                        </CardDescription>
-                        <CardDescription>
-                            Pending: {{ stats.pending }}
-                        </CardDescription>
-                        <CardDescription>
-                            In Progress: {{ stats.in_progress }}
-                        </CardDescription>
-                        <CardDescription>
-                            Completed: {{ stats.completed }}
-                        </CardDescription>
+                    <CardContent class="p-0">
+                        <Table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <TableHeader class="bg-gray-50 dark:bg-gray-800">
+                                <TableRow>
+                                    <TableHead>Team Name</TableHead>
+                                    <TableHead>Total Tasks</TableHead>
+                                    <TableHead>Pending</TableHead>
+                                    <TableHead>In Progress</TableHead>
+                                    <TableHead>Completed</TableHead>
+                                    <TableHead>Actions</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                <TableRow v-for="(stats, index) in teams" :key="index">
+                                    <TableCell class="px-6 py-4 whitespace-nowrap">
+                                        <span v-if="stats.team_name">{{ stats.team_name }}</span>
+                                        <span v-else class="text-gray-400">No Team</span>
+                                    </TableCell>
+                                    <TableCell class="px-6 py-4 whitespace-nowrap">
+                                        <span v-if="stats.team_name">{{ stats.total }}</span>
+                                        <span v-else>-</span>
+                                    </TableCell>
+                                    <TableCell class="px-6 py-4 whitespace-nowrap">
+                                        <span v-if="stats.team_name">{{ stats.pending }}</span>
+                                        <span v-else>-</span>
+                                    </TableCell>
+                                    <TableCell class="px-6 py-4 whitespace-nowrap">
+                                        <span v-if="stats.team_name">{{ stats.in_progress }}</span>
+                                        <span v-else>-</span>
+                                    </TableCell>
+                                    <TableCell class="px-6 py-4 whitespace-nowrap">
+                                        <span v-if="stats.team_name">{{ stats.completed }}</span>
+                                        <span v-else>-</span>
+                                    </TableCell>
+                                    <TableCell class="px-6 py-4 whitespace-nowrap flex gap-2 items-center">
+                                        <template v-if="stats.team_name">
+                                            <Button size="sm" as-child>
+                                                <a :href="route('teams.show', { team: stats.team_id })">
+                                                    View
+                                                </a>
+                                            </Button>
+                                            <Button v-if="currentTeamId !== stats.team_id"
+                                                @click="switchTeam(stats.team_id)" size="sm" variant="outline">
+                                                Switch
+                                            </Button>
+                                            <Badge v-if="currentTeamId === stats.team_id" variant="secondary">
+                                                Current Team
+                                            </Badge>
+                                        </template>
+                                        <template v-else>
+                                            <Button variant="outline" size="sm" as-child>
+                                                <a :href="route('teams.create')">
+                                                    Create or Join a Team
+                                                </a>
+                                            </Button>
+                                        </template>
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
                     </CardContent>
                 </Card>
             </div>
@@ -79,6 +105,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { router } from '@inertiajs/vue3';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table'
 
 const page = usePage();
 const currentTeamId = page.props.currentTeamId ?? null;

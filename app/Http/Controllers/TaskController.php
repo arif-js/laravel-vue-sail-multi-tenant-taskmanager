@@ -22,16 +22,6 @@ class TaskController extends Controller
         ]);
     }
 
-    public function create(Team $team)
-    {
-        $users = $team->users;
-
-        return Inertia::render('Tasks/Create', [
-            'team' => $team,
-            'users' => $users,
-        ]);
-    }
-
     public function store(Request $request, Team $team)
     {
         $request->validate([
@@ -49,41 +39,35 @@ class TaskController extends Controller
             'status' => $request->status,
         ]);
 
-        return redirect()->route('tasks.index', $team->id)
-            ->with('success', 'Task created.');
-    }
-
-    public function edit(Team $team, Task $task)
-    {
-        $users = $team->users;
-
-        return Inertia::render('Tasks/Edit', [
-            'team' => $team,
-            'task' => $task,
-            'users' => $users,
+        return Inertia::render('Tasks/Index', [
+            'tasks' => Task::with('user')->where('team_id', $team->id)->get(),
         ]);
     }
 
     public function update(Request $request, Team $team, Task $task)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'user_id' => 'required|exists:users,id',
-            'description' => 'nullable|string',
-            'status' => 'required|in:pending,in_progress,completed',
+        // Validate if specific fields are present
+        $validated = $request->validate([
+            'title' => 'sometimes|string|max:255',
+            'description' => 'sometimes|string',
+            'status' => 'sometimes|in:pending,in_progress,completed',
+            'user_id' => 'sometimes|exists:users,id', // optional future support
         ]);
 
-        $task->update($request->only('title', 'description', 'status', 'user_id'));
+        $task->update($validated);
 
-        return redirect()->route('tasks.index', $team->id)
-            ->with('success', 'Task updated.');
+        return Inertia::render('Tasks/Index', [
+            'tasks' => Task::with('user')->where('team_id', $team->id)->get()
+    ]);
     }
 
     public function destroy(Team $team, Task $task)
     {
         $task->delete();
 
-        return redirect()->route('tasks.index', $team->id)
-            ->with('success', 'Task deleted.');
+        return Inertia::render('Tasks/Index', [
+            'tasks' => Task::with('user')->where('team_id', $team->id)->get(),
+            'deletedTask' => $task,
+        ]);
     }
 }

@@ -24,11 +24,11 @@
                         <CardDescription>
                             <form class="flex flex-col gap-4" @submit.prevent="submitForm">
                                 <div>
-                                    <Label for="teamName" class="block mb-1 font-medium">Team Name</Label>
+                                    <Label for="teamName">Team Name</Label>
                                     <Input id="teamName" v-model="form.name" placeholder="Enter team name" required />
                                 </div>
                                 <div>
-                                    <Label for="description" class="block mb-1 font-medium">Description</Label>
+                                    <Label for="description">Description</Label>
                                     <Input id="description" v-model="form.description"
                                         placeholder="Enter description" />
 

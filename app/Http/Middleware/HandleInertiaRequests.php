@@ -34,7 +34,10 @@ class HandleInertiaRequests extends Middleware
 
         $currentTeam = null;
         if ($user && session('current_team_id')) {
-            $currentTeam = $user->teams()->find(session('current_team_id'));
+            $currentTeam = $user->teams()
+                ->withPivot('user_id')
+                ->with('users') // eager load users relation
+                ->find(session('current_team_id'));
         }
 
         return [
