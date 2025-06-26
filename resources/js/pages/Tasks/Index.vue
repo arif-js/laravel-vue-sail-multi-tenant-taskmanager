@@ -17,14 +17,14 @@
     <BodyLayout>
       <Card class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <TaskColumn title="Pending" :color="'yellow'" :tasks="pendingTasks" status="pending"
-            @drop="onDrop" @delete="deleteTask" @update="updateTaskStatus" />
+          <TaskColumn title="Pending" :color="'yellow'" :tasks="pendingTasks" status="pending" @drop="onDrop"
+            @delete="deleteTask" @update="updateTaskStatus" />
 
-          <TaskColumn title="In Progress" :color="'blue'" :tasks="inProgressTasks" status="in_progress"
-            @drop="onDrop" @delete="deleteTask" @update="updateTaskStatus"  />
+          <TaskColumn title="In Progress" :color="'blue'" :tasks="inProgressTasks" status="in_progress" @drop="onDrop"
+            @delete="deleteTask" @update="updateTaskStatus" />
 
-          <TaskColumn title="Completed" :color="'green'" :tasks="completedTasks"
-            status="completed" @drop="onDrop" @delete="deleteTask" @update="updateTaskStatus" />
+          <TaskColumn title="Completed" :color="'green'" :tasks="completedTasks" status="completed" @drop="onDrop"
+            @delete="deleteTask" @update="updateTaskStatus" />
         </div>
       </Card>
 
@@ -68,8 +68,10 @@
   </AuthenticatedLayout>
 </template>
 
-<script setup>
-import { computed, ref, reactive } from 'vue'
+<script setup lang="ts">
+import { computed, ref, reactive, ComputedRef } from 'vue'
+import { onMounted, onBeforeUnmount } from 'vue';
+
 import { router, Head, usePage } from '@inertiajs/vue3'
 import {
   PlusIcon,
@@ -90,20 +92,31 @@ const props = defineProps({
   tasks: { type: Array, default: () => [] },
 })
 
+export interface Task {
+  id: number;
+  title: string;
+  description: string;
+  user_id: number;
+  status: 'pending' | 'in_progress' | 'completed';
+  created_at: string;
+  updated_at?: string;
+}
+
 const page = usePage()
 const currentTeamId = page.props.currentTeamId ?? null
-const currentTeam = page.props.currentTeam ?? null
+const currentTeam: any = page.props.currentTeam ?? null
 
 const showCreateModal = ref(false)
 const newTask = ref({ title: '', description: '', user_id: null, status: 'pending' })
-const localTasks = reactive([...props.tasks])
+const localTasks = reactive([...props.tasks]) as Task[]
 
-const filterByStatus = (status) =>
-  computed(() => localTasks.filter((task) => task.status === status))
+const filterByStatus = (status: string): ComputedRef<Task[]> => {
+  return computed(() => localTasks.filter((task: Task) => task.status === status))
+}
 
-const pendingTasks = filterByStatus('pending')
-const inProgressTasks = filterByStatus('in_progress')
-const completedTasks = filterByStatus('completed')
+const pendingTasks: ComputedRef<Task[]> = filterByStatus('pending')
+const inProgressTasks: ComputedRef<Task[]> = filterByStatus('in_progress')
+const completedTasks: ComputedRef<Task[]> = filterByStatus('completed')
 
 const createTask = () => {
   router.post(
@@ -111,13 +124,13 @@ const createTask = () => {
     {
       title: newTask.value.title,
       description: newTask.value.description,
-      user_id: newTask.value.user_id || currentTeam.users[0]?.id, // Default to first user if none selected
+      user_id: newTask.value.user_id || currentTeam?.users[0]?.id, // Default to first user if none selected
       status: 'pending',
     },
     {
       preserveScroll: true,
       onSuccess: (page) => {
-        const newTaskFromServer = page.props.tasks.at(-1) // Get last task
+        const newTaskFromServer = (page.props.tasks as any[]).at(-1) // Get last task
         localTasks.push(newTaskFromServer)
 
         showCreateModal.value = false
@@ -130,7 +143,7 @@ const createTask = () => {
   )
 }
 
-const updateTaskStatus = (taskId, newStatus) => {
+const updateTaskStatus = (taskId: number, newStatus: string) => {
   router.patch(
     route('tasks.update', { team: currentTeamId, task: taskId }),
     { status: newStatus },
@@ -144,7 +157,7 @@ const updateTaskStatus = (taskId, newStatus) => {
   )
 }
 
-const deleteTask = (taskId) => {
+const deleteTask = (taskId: number) => {
   if (confirm('Are you sure you want to delete this task?')) {
 
     router.delete(route('tasks.destroy', { team: currentTeamId, task: taskId }), {
@@ -157,7 +170,7 @@ const deleteTask = (taskId) => {
   }
 }
 
-const onDrop = (newStatus, dropResult) => {
+const onDrop = (newStatus: string, dropResult: any) => {
   const { addedIndex, removedIndex, payload: task } = dropResult
 
   if (addedIndex === null && removedIndex === null) return;
@@ -173,7 +186,7 @@ const onDrop = (newStatus, dropResult) => {
   addTaskToList(updatedTask)
 }
 
-const replaceTaskInList = (updatedTask) => {
+const replaceTaskInList = (updatedTask: any) => {
   const index = localTasks.findIndex(t => t.id === updatedTask.id)
   if (index !== -1) {
     localTasks.splice(index, 1, updatedTask)
@@ -182,12 +195,27 @@ const replaceTaskInList = (updatedTask) => {
   }
 }
 
-const removeTaskFromList = (id) => {
-  const index = localTasks.findIndex((t) => t.id === id)
+const removeTaskFromList = (id: number) => {
+  const index = localTasks.findIndex((t: any) => t.id === id)
   if (index !== -1) localTasks.splice(index, 1)
 }
 
-const addTaskToList = (task) => localTasks.push(task)
+const addTaskToList = (task: any) => localTasks.push(task)
+
+onMounted(() => {
+  window.addEventListener('task:assigned', handleNewTask as EventListener);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('task:assigned', handleNewTask as EventListener);
+});
+
+const handleNewTask = (e: Event) => {
+  const customEvent = e as CustomEvent;
+  const newTask = customEvent.detail;
+
+  localTasks.push(newTask);
+};
 </script>
 
 <style scoped>

@@ -50,31 +50,34 @@ const bgColorClass = computed(() => `bg-${props.color}-200`)
                     @input="(e: any) => $emit('search', e.target.value, status)" />
             </div>
 
-            <Container class="h-96" group-name="tasks" :get-child-payload="(i: number) => tasks[i]"
-                @drop="(e: any) => $emit('drop', status, e)">
-                <Draggable v-for="task in tasks" :key="task.id" :data="task" :class="[
-                    'bg-gray-50 rounded-lg mb-4 p-4 border border-gray-200 hover:shadow-md transition-shadow duration-200 cursor-pointer',
-                    status === 'completed' ? 'opacity-75' : ''
-                ]">
-                    <h4 :class="['font-medium text-gray-900 mb-2', status === 'completed' ? 'line-through' : '']">
-                        {{ task.title }}
-                    </h4>
-                    <p class="text-sm text-gray-600 mb-3 line-clamp-2">{{ task.description }}</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs text-gray-500">{{ formatDate(task.updated_at || task.created_at) }}</span>
-                        <div class="flex items-center space-x-2">
-                            <Button variant="ghost" class="text-red-600 hover:text-red-800"
-                                @click.stop="$emit('delete', task.id)">
-                                <TrashIcon class="w-4 h-4" />
-                            </Button>
+            <div class="h-[22rem] overflow-y-auto">
+                <Container group-name="tasks" :get-child-payload="(i: number) => tasks[i]"
+                    @drop="(e: any) => $emit('drop', status, e)">
+                    <Draggable v-for="task in tasks" :key="task.id" :data="task" :class="[
+                        'bg-gray-50 rounded-lg mb-4 p-4 border border-gray-200 hover:shadow-md transition-shadow duration-200 cursor-pointer',
+                        status === 'completed' ? 'opacity-75' : ''
+                    ]">
+                        <h4 :class="['font-medium text-gray-900 mb-2', status === 'completed' ? 'line-through' : '']">
+                            {{ task.title }}
+                        </h4>
+                        <p class="text-sm text-gray-600 mb-3 line-clamp-2">{{ task.description }}</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-gray-500">{{ formatDate(task.updated_at || task.created_at)
+                                }}</span>
+                            <div class="flex items-center space-x-2">
+                                <Button variant="ghost" class="text-red-600 hover:text-red-800"
+                                    @click.stop="$emit('delete', task.id)">
+                                    <TrashIcon class="w-4 h-4" />
+                                </Button>
+                            </div>
                         </div>
-                    </div>
-                </Draggable>
+                    </Draggable>
 
-                <div v-if="tasks.length === 0" class="text-center py-8 text-gray-500">
-                    <p>No {{ title.toLowerCase() }} tasks</p>
-                </div>
-            </Container>
+                    <div v-if="tasks.length === 0" class="text-center py-8 text-gray-500">
+                        <p>No {{ title.toLowerCase() }} tasks</p>
+                    </div>
+                </Container>
+            </div>
         </div>
     </div>
 </template>

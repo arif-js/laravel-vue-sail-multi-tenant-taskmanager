@@ -40,6 +40,8 @@ class TaskController extends Controller
             'status' => $request->status,
         ]);
 
+        $task = Task::with('user')->find($task->id);
+
         $user = User::findOrFail($request->user_id);
 
         event(new UserAssignedEvent($task));

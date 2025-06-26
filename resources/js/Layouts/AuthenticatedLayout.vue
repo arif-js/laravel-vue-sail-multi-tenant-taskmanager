@@ -43,6 +43,7 @@ window.Echo = new Echo({
 window.Echo.private(`user.assigned.${auth.user.id}`)
     .listen('UserAssignedEvent', (e: any) => {
         console.log(e);
+        window.dispatchEvent(new CustomEvent('task:assigned', { detail: e }));
     });
 
 </script>
