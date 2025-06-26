@@ -8,7 +8,6 @@ import { computed } from 'vue'
 
 const props = defineProps<{
     title: string,
-    icon: [string, Object],
     color: string,
     tasks: Array<{
         id: number,
@@ -37,7 +36,6 @@ const bgColorClass = computed(() => `bg-${props.color}-200`)
         <div :class="['px-4', 'py-3', 'border-b', bgColorClass, 'flex', 'items-center', 'justify-between']">
             <div class="flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-gray-900 flex items-center">
-                    <component :is="icon" :class="`w-5 h-5 mr-2 text-black`" />
                     {{ title }}
                 </h3>
                 <span :class="`text-xs font-medium px-2.5 py-0.5 rounded-full`">
@@ -74,7 +72,6 @@ const bgColorClass = computed(() => `bg-${props.color}-200`)
                 </Draggable>
 
                 <div v-if="tasks.length === 0" class="text-center py-8 text-gray-500">
-                    <component :is="icon" class="w-12 h-12 mx-auto mb-3 text-gray-300" />
                     <p>No {{ title.toLowerCase() }} tasks</p>
                 </div>
             </Container>

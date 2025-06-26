@@ -17,14 +17,14 @@
     <BodyLayout>
       <Card class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <TaskColumn icon="ClockIcon" title="Pending" :color="'yellow'" :tasks="pendingTasks" status="pending"
-            @drop="onDrop" @delete="deleteTask" @update="updateTaskStatus" @search="searchTasks" />
+          <TaskColumn title="Pending" :color="'yellow'" :tasks="pendingTasks" status="pending"
+            @drop="onDrop" @delete="deleteTask" @update="updateTaskStatus" />
 
-          <TaskColumn icon="PlayIcon" title="In Progress" :color="'blue'" :tasks="inProgressTasks" status="in_progress"
-            @drop="onDrop" @delete="deleteTask" @update="updateTaskStatus" @search="searchTasks" />
+          <TaskColumn title="In Progress" :color="'blue'" :tasks="inProgressTasks" status="in_progress"
+            @drop="onDrop" @delete="deleteTask" @update="updateTaskStatus"  />
 
-          <TaskColumn icon="CheckCircleIcon" title="Completed" :color="'green'" :tasks="completedTasks"
-            status="completed" @drop="onDrop" @delete="deleteTask" @update="updateTaskStatus" @search="searchTasks" />
+          <TaskColumn title="Completed" :color="'green'" :tasks="completedTasks"
+            status="completed" @drop="onDrop" @delete="deleteTask" @update="updateTaskStatus" />
         </div>
       </Card>
 

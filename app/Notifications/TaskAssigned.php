@@ -7,14 +7,15 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\BroadcastMessage;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
 use App\Models\Task;
 
-class TaskAssigned extends Notification
+class TaskAssigned extends Notification implements ShouldBroadcast
 {
-    use Queueable;
+    // use Queueable;
 
-    public Task $task;
+    protected Task $task;
 
     /**
      * Create a new notification instance.
@@ -46,7 +47,6 @@ class TaskAssigned extends Notification
             ->line('Thank you for using our application!');
     }
 
-
     public function toBroadcast(object $notifiable): BroadcastMessage
     {
         return new BroadcastMessage($this->toArray($notifiable));
@@ -63,7 +63,9 @@ class TaskAssigned extends Notification
             'task_id' => $this->task->id,
             'title' => $this->task->title,
             'description' => $this->task->description,
-            'assigned_by' => auth()->user()?->name ?? 'System',
+            'status' => $this->task->status,
+            'assigned_to' => $this->task->user_id,
+            'assigned_by' => auth()->user()?->id ?? 'System',
         ];
     }
 }

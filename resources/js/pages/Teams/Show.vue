@@ -108,7 +108,7 @@ const team = props.team;
 const userRole = props.role;
 const tasksCount = props.tasksCount;
 
-console.log('Team:', JSON.stringify(team), userRole, tasksCount);
+// console.log('Team:', JSON.stringify(team), userRole, tasksCount);
 
 const canInvite = computed(() => {
     return userRole === 'Owner' || userRole === 'Admin';

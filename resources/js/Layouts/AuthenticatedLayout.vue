@@ -14,7 +14,9 @@ import {
 import { Button } from '@/Components/ui/button';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
-import { useEcho } from "@laravel/echo-vue";
+
+import Pusher from 'pusher-js';
+import Echo from 'laravel-echo';
 
 const showingNavigationDropdown = ref(false);
 
@@ -22,14 +24,26 @@ const page = usePage();
 const currentTeamId = page.props.currentTeamId ?? null;
 const auth = page.props.auth;
 
-useEcho(
-  `user.assigned.notification.${auth.user.id}`,
-  "user.assigned.notification",
-  (event: any) => {
-    console.log("🚀 New task assigned:", event.assignedTask);
-    // You can now show a toast or update task list
-  }
-);
+Pusher.logToConsole = true;
+window.Pusher = Pusher;
+
+window.Echo = new Echo({
+    broadcaster: "pusher",
+    key: import.meta.env.VITE_PUSHER_APP_KEY,
+    cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
+    forceTLS: true,
+    authEndpoint: "/broadcasting/auth", // Laravel's default
+    auth: {
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '',
+        },
+    },
+});
+
+window.Echo.private(`user.assigned.${auth.user.id}`)
+    .listen('UserAssignedEvent', (e: any) => {
+        console.log(e);
+    });
 
 </script>
 
