@@ -56,29 +56,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { useForm } from '@inertiajs/vue3'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
+import { Input } from '@/Components/ui/input'
+import { Label } from '@/Components/ui/label'
+import { Button } from '@/Components/ui/button'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import BodyLayout from '@/Layouts/BodyLayout.vue'
 import { Head } from '@inertiajs/vue3'
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/Components/ui/select'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-} from "@/components/ui/card"
+} from "@/Components/ui/card"
 
 const props = defineProps({
-  team: Object,
+  team: {
+    type: Object,
+    required: true
+  },
 })
 
 const form = useForm({
   email: '',
-  role: 'Member', // default
+  role: 'Member', // default role
 })
 
 function submit() {

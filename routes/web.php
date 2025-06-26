@@ -18,6 +18,7 @@ use App\Http\Middleware\EnsureUserIsTeamAdminOrOwner;
 use App\Http\Middleware\EnsureUserIsTeamOwner;
 use App\Http\Middleware\RedirectAuthenticatedInvite;
 use App\Http\Middleware\EnsureUserIsLoggedinInTheTeam;
+use App\Events\UserAssignedNotification;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [

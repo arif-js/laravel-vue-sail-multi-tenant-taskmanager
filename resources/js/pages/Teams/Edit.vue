@@ -38,7 +38,7 @@
                         <CardDescription>
                             <Button variant="outline" class="w-full">
                                 <a :href="route('teams.show', { team: props.team.id })">
-                                    Back to Dashboard
+                                    Back to Team Details
                                 </a>
                             </Button>
                         </CardDescription>
@@ -53,8 +53,8 @@
 <script setup>
 import { ref } from 'vue'
 import { useForm } from '@inertiajs/vue3'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import { Input } from '@/Components/ui/input'
+import { Button } from '@/Components/ui/button'
 
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import BodyLayout from '@/Layouts/BodyLayout.vue'
@@ -64,7 +64,7 @@ import {
     CardContent,
     CardDescription,
     CardHeader,
-} from "@/components/ui/card"
+} from "@/Components/ui/card"
 
 const props = defineProps({
     team: {

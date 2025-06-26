@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Inertia\Response;
 
+use App\Models\TeamInvitation;
+
 class AuthenticatedSessionController extends Controller
 {
     /**
@@ -30,31 +32,34 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
-    }
-
-    public function authenticated(Request $request, $user)
-    {
+        // Invitation handling
         if ($request->has('invite_token') && $request->has('team_id')) {
             $invite = TeamInvitation::where('token', $request->invite_token)
-                        ->where('team_id', $request->team_id)
-                        ->first();
+                ->where('team_id', $request->team_id)
+                ->first();
 
             if ($invite) {
+                $user = $request->user();
+
+                // Attach user to the team
                 $invite->team->users()->syncWithoutDetaching([
                     $user->id => ['role' => $invite->role],
                 ]);
+
                 $invite->delete();
 
                 return redirect()->route('teams.show', $invite->team->id)
                     ->with('success', 'You have joined the team!');
+            } else {
+                return redirect()->route('login')->withErrors([
+                    'email' => 'Invalid or expired invitation token.',
+                ]);
             }
         }
 
-        return redirect()->intended('/dashboard');
+        return redirect()->intended(route('dashboard'));
     }
 
     /**

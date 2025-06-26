@@ -7,6 +7,7 @@ use App\Models\Team;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Events\UserAssignedNotification;
 
 class TaskController extends Controller
 {
@@ -38,6 +39,10 @@ class TaskController extends Controller
             'description' => $request->description,
             'status' => $request->status,
         ]);
+
+        $user = User::findOrFail($request->user_id);
+
+        event(new UserAssignedNotification($task));
 
         return Inertia::render('Tasks/Index', [
             'tasks' => Task::with('user')->where('team_id', $team->id)->get(),

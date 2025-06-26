@@ -95,10 +95,10 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Button } from '@/components/ui/button'
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
-import { Label } from '@/components/ui/label'
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table'
+import { Button } from '@/Components/ui/button'
+import { Avatar, AvatarImage, AvatarFallback } from '@/Components/ui/avatar'
+import { Label } from '@/Components/ui/label'
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/Components/ui/table'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import BodyLayout from '@/Layouts/BodyLayout.vue'
 import { router } from '@inertiajs/vue3';

@@ -3,7 +3,7 @@
 
 You have been invited to join **{{ $teamName }}** as a **{{ $role }}**.
 
-@component('mail::button', ['url' => $acceptUrl])
+@component('mail::button', ['url' => html_entity_decode($acceptUrl)])
 Accept Invitation
 @endcomponent
 

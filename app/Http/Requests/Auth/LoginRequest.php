@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
+use App\Models\TeamInvitation;
+
 class LoginRequest extends FormRequest
 {
     /**
@@ -41,23 +43,11 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if ($this->has('invite_token') && $this->has('team_id')) {
-            $inviteExists = TeamInvitation::where('token', $this->invite_token)
-                ->where('team_id', $this->team_id)
-                ->exists();
-
-            if ($inviteExists) {
-                throw ValidationException::withMessages([
-                    'email' => ['This invitation must be accepted properly. Please use the invite link or register.'],
-                ]);
-            }
-        }
-
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+            'email' => trans('auth.failed'),
             ]);
         }
 

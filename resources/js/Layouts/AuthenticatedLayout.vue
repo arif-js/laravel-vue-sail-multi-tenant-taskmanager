@@ -10,15 +10,26 @@ import {
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '@/Components/ui/dropdown-menu'
 import { Button } from '@/Components/ui/button';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
+import { useEcho } from "@laravel/echo-vue";
 
 const showingNavigationDropdown = ref(false);
 
 const page = usePage();
 const currentTeamId = page.props.currentTeamId ?? null;
+const auth = page.props.auth;
+
+useEcho(
+  `user.assigned.notification.${auth.user.id}`,
+  "user.assigned.notification",
+  (event: any) => {
+    console.log("🚀 New task assigned:", event.assignedTask);
+    // You can now show a toast or update task list
+  }
+);
 
 </script>
 

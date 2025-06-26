@@ -55,9 +55,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useForm, router } from '@inertiajs/vue3'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
+import { Input } from '@/Components/ui/input'
+import { Button } from '@/Components/ui/button'
+import { Label } from '@/Components/ui/label'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import BodyLayout from '@/Layouts/BodyLayout.vue'
 import { Head } from '@inertiajs/vue3'
@@ -66,7 +66,7 @@ import {
     CardContent,
     CardDescription,
     CardHeader,
-} from "@/components/ui/card"
+} from "@/Components/ui/card"
 
 const form = useForm({
     name: '',

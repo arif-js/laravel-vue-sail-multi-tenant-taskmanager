@@ -101,23 +101,30 @@ import {
     CardDescription,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card"
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+} from "@/Components/ui/card"
+import { Button } from '@/Components/ui/button';
+import { Badge } from '@/Components/ui/badge';
 import { router } from '@inertiajs/vue3';
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table'
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/Components/ui/table'
 
 const page = usePage();
 const currentTeamId = page.props.currentTeamId ?? null;
 
-const props = defineProps({
+defineProps({
     teams: {
-        type: Array,
+        type: Array<{
+            team_id: number;
+            team_name: string | null;
+            total: number;
+            pending: number;
+            in_progress: number;
+            completed: number;
+        }>,
         default: () => [],
     },
 })
 
-function switchTeam(id) {
+function switchTeam(id: number) {
     router.visit(route('teams.switch', id), {
         method: 'post',
         preserveScroll: true,
@@ -127,3 +134,4 @@ function switchTeam(id) {
 }
 
 </script>
+
